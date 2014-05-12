@@ -162,6 +162,14 @@ function appendText(text){
 }
 
 function login(){
+	if(!isEmail($('#input-login').val())){
+		message('Votre identifiant doit être un email');
+		return;
+	}
+	if($('#input-password').val().length<6){
+		message('Votre mot de passe doit être composé d\'au moins 6 caracteres');
+		return;
+	}
 	$.ajax({
         type: "POST",
         url: 'action.php',
@@ -172,7 +180,29 @@ function login(){
                 loadLogin();
                 init();
             }else{
-                alert(result.message);
+                message(result.message);
+            }
+        }});
+}
+function suscribe(){
+	if(!isEmail($('#input-login').val())){
+		message('Votre identifiant doit être un email');
+		return;
+	}
+	if($('#input-password').val().length<6){
+		message('Votre mot de passe doit être composé d\'au moins 6 caracteres');
+		return;
+	}
+	$.ajax({
+        type: "POST",
+        url: 'action.php',
+        dataType:"json",
+        data:{action:'suscribe',login:$('#input-login').val(),password:$('#input-password').val()},
+        success: function(result){
+            if(result.success){
+				login();
+            }else{
+                message(result.message);
             }
         }});
 }
@@ -243,7 +273,7 @@ function deleteFile(file,target){
             if(result.success){
                 $(target).parent().fadeOut(400);
             }else{
-                alert(result.message);
+                message(result.message);
             }
         }});
     }
@@ -370,3 +400,9 @@ $.fn.draghover = function(options) {
     });
   });
 };
+
+
+function isEmail(email) { 
+    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+} 

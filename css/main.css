@@ -13,6 +13,7 @@ html {
     font-size: 0.9em;
     line-height: 1.4;
 }
+html,body{ height:100%;}
 
 /*
  * Customisation des sélections
@@ -63,7 +64,7 @@ html,body{
 				
 				
 
-				#button-login{
+				#button-login,#button-suscribe{
 					display:inline-block;
 					border-radius:3px;
 					font-size: 12px;
@@ -326,7 +327,7 @@ html,body{
 					padding:0 10px 0 10px;
 					width: 60%;
 					height: 90%;
-					margin:auto auto 50px auto;
+					margin:auto;
 				}
 				#content-options {
 					position:fixed;

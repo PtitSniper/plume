@@ -56,15 +56,26 @@ switch($action){
 	break;
 	
 	case 'login':
-		if($_['login']=='admin' && $_['password']==ADMIN_PASSWORD){
-			$myUser = (object) array();
-			$myUser->login = 'admin';
+		$users = getDb(USER_DB);
+		$myUser = false;
+		foreach($users as $user){
+			if($_['login']==$user['login'] && sha1($_['password'])==$user['password']) $myUser = (object)$user;
+		}
+		if($myUser!=false){
 			$_SESSION['user'] = serialize($myUser);
 			$jsonResponse['success'] = true;
 		}else{
 			$jsonResponse['message'] = 'Mauvais login ou mot de passe.';
 		}
 		echo json_encode($jsonResponse);
+	break;
+	
+	case 'suscribe':
+		if(!filter_var($_['login'], FILTER_VALIDATE_EMAIL) ||  strlen($_['password'])<6) exit(0);
+		$users = getDb(USER_DB);
+		$users[] = (object) array('login'=>$_['login'],'password'=>sha1($_['password']));
+		saveDb(USER_DB,$users);
+		//echo json_encode($jsonResponse);
 	break;
 	
 	case 'logout':
@@ -74,7 +85,9 @@ switch($action){
 	
 	case 'loginBar':
 		if(!$myUser){ ?>
-			<input type="text" name="input-login" placeholder="Login" id="input-login"/> <input type="password" placeholder="Password" name="input-password" id="input-password"/> <div id="button-login" onclick="login();">Login</div>
+			<input type="text" name="input-login" placeholder="Email" id="input-login"/> <input type="password" placeholder="Password" name="input-password" id="input-password"/> 
+			<div id="button-login" onclick="login();">Login</div> | 
+			<div id="button-suscribe" onclick="suscribe();">Inscription</div>
 		<?php }else{ ?>
 			Identifié avec <span class="emphasis"><?php echo $myUser->login; ?></span> - <a onclick="disconnect()">Déconnexion</a>
 		<?php } 

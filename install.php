@@ -1,11 +1,14 @@
 <?php
 require_once('common.php');
-if(!file_exists(USER_DB)) header('location: install.php');
-//Lecture de la page courante et conversion markdown/html
-$pageContent = file_exists($pagePath )?file_get_contents($pagePath):'Le contenu de  **'.$page.'** est vide :p';
-//Mode lecture/mode edition
-$pageContent = Parsedown::instance()->parse($pageContent);
 
+if(file_exists(USER_DB)) exit(0);
+
+if(isset($_['login'])){
+	$users = getDb(USER_DB);
+	$users[] = (object) array('login'=>$_['login'],'rank'=>'admin','password'=>sha1($_['password']));
+	saveDb(USER_DB,$users);
+	header('location: index.php');
+}
 
 ?>
 <!DOCTYPE html>
@@ -34,57 +37,18 @@ $pageContent = Parsedown::instance()->parse($pageContent);
         <![endif]-->
 		
         <!-- Add your site or application content here -->
-        <div id='main-container'>
-		
-				<div id='menu-container'>
-						<div id="logo" onclick="window.location='index.php';"><span >V<?php echo APPLICATION_VERSION; ?></span></div>
-						<ul id='menu'></ul>
-						<div id='option-edit-menu' onclick="edit('<?php echo MD_MENU; ?>',this,'menu');">Editer</div>
-					<div id='media-container'>
-						<div id='search-zone'>
-							<img src="img/icon-search.png" align="absmiddle"> <input type="text" placeholder="keyword" id="search-input">
-						</div>
-
-						<div id="drop-container" title="Faites glisser des fichiers sur la zone ou cliquez sur celle ci pour envoyer des fichiers">
-							<div id="drop-zone">
-								<input id="uploadButton" type="file" size="1" name="files[]" data-url="./action.php?action=upload" multiple>
-							</div>
-						</div>
-						
-						<ul id='file-list'></ul>
-					</div>
-					<div class="rss-button" onclick="window.location.href='action.php?action=rss'">Flux Rss</div>
-
-					<!--
-					<div id='share-container'>
-						<ul id='tags-list'>
-							<li>Tag 1</li>
-							<li>Tag 2</li>
-						</ul>
-						<ul id='related-list'>
-							<li>ilot 1</li>
-							<li>ilot 2</li>
-						</ul>
-					</div>
-				-->
-				
-				</div>
-				<div id='content-container'>
-					
-					<div id='content'>
-						<?php echo $pageContent; ?>
-					</div>
-					<ul id='content-options'>
-						<li id="option-edit" onclick="edit('<?php echo $page ?>',this);">Editer</li>
-						<li id="option-login">Login</li>
-						<li id="global-preloader"><img src="" align="absmiddle"> Loading...</li>
-						<!--<li onclick="share();">Partager</li>
-						<li onclick="delete();">Supprimer</li>-->
-					</ul>
-					
-					
-				</div>
-			</div>
+        <div id='main-container' style="margin:auto;width:300px;">
+		<div id="content">
+			<h1>Installation</h1>
+			<form id="installForm" action="install.php" method="POST">
+			Login admin : <br/><input type="text" style="width:150px;padding:3px;" name="login"><br/>
+			mdp admin : <br/><input type="password" style="width:150px;padding:3px;" name="password"><br/>
+			mdp admin confirm : <br/><input type="password" style="width:150px;padding:3px;" name="passwordConfirm"><br/>
+			
+			<div onclick="validateForm();" style="text-align:center;background-color: #FFFFFF;border: 1px solid rgba(0, 0, 0, 0);border-radius: 3px;cursor: pointer;margin: 5px 5px 5px 0;padding: 3px;width:150px;">Installation</div>
+			</form>
+		</div>
+		</div>
 			<div class='clear'></div>
 			<div id='footer-container'></div>
 			<div id="UPDATE_URL" class="hidden"><?php echo UPDATE_URL; ?></div>
@@ -98,5 +62,26 @@ $pageContent = Parsedown::instance()->parse($pageContent);
 		<script type="text/javascript" src="js/vendor/jquery.markitup.js"></script>
 		<script type="text/javascript" src="js/plugins.js"></script>
         <script type="text/javascript" src="js/main.js"></script>
+		<script>
+			
+			function validateForm(){
+				if(!isEmail($('input[name=\'login\']').val())){
+					message('Votre identifiant doit être un email');
+					return;
+				}
+				if($('input[name=\'password\']').val().length<6){
+					message('Votre mot de passe doit être composé d\'au moins 6 caracteres');
+					return;
+				}
+				
+				if($('input[name=\'password\']').val()!=$('input[name=\'passwordConfirm\']').val()){
+					message('Les mots de pass ne correspondent pas');
+					return;
+				}
+				$('#installForm').submit();
+			}
+		
+		</script>
     </body>
 </html>
+

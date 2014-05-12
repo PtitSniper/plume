@@ -1,6 +1,6 @@
 <?php
-//Mot de passe d'édition
-define('ADMIN_PASSWORD','admin');
+
+define('USER_DB','.users.php');
 //Titre du wiki
 define('APPLICATION_TITLE','Plume');
 //Taille maximum d'upload de fichiers

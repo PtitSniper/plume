@@ -14,5 +14,16 @@ function event($title,$content,$page){
 	file_put_contents(EVENT_FILE, json_encode($events));
 }
 
+function getDb($dbFile){
+	if(!file_exists($dbFile)) touch($dbFile);
+	$db = file_get_contents($dbFile);
+	$db = $db == '' ? array() : json_decode(str_replace(array('<?php /* ',' */ ?>'),'',gzinflate($db)),true);
+	return $db;
+}
+function saveDb($dbFile,$dbdata){
+	if(!file_exists($dbFile)) touch($dbFile);
+	file_put_contents($dbFile,gzdeflate('<?php /* '.json_encode($dbdata).' */ ?>'));
+}
+
 
 ?>
