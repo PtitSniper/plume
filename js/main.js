@@ -1,6 +1,6 @@
 var pendingTask = false;
 var addedFiles = Array();
-
+var pinMenu = false;
  
 myMarkdownSettings = {
     nameSpace:          'markdown',
@@ -70,6 +70,7 @@ $(document).ready(function(){
             $.data(data.files[0],tpl);
 			$('#file-list').prepend(tpl);
             console.log('add');
+			zenMode = false;
         },
         done: function (e, data) {
 			$.data(data.files[0]).find('.progressBloc').fadeOut(300);
@@ -79,6 +80,7 @@ $(document).ready(function(){
 			pendingTask = false;
 			loadFiles();
 			console.log('tous les uploads termines');
+			zenMode = true;
        	},
         progress: function (e, data) {
 	       var progress = parseInt(data.loaded / data.total * 100, 10);
@@ -107,18 +109,18 @@ function init(){
     
         var deactivate;
         if(zenMode){
-        $('#menu-container').hover(function(){
-                clearInterval(deactivate);
-                $('#menu-container').animate({opacity:1},100);  
+			$('#menu-container').hover(function(){
+				   // clearInterval(deactivate);
+					unfoldMenu();
 
-        },function(){
-                deactivate = setTimeout(function(){
-                     $('#menu-container').animate({opacity:0},100);  
-                },10000);
-               
-
-        });
-    }
+			},function(){
+				   // deactivate = setTimeout(function(){
+						 foldMenu();
+				   // },10000);
+			});
+		}else{
+			unfoldMenu();
+		}
 
     loadMenu();
     loadFiles();
@@ -132,9 +134,25 @@ function init(){
     $('code').litelighter({});
     $('code').litelighter('destroy');
     $('code').litelighter({style:'monokai'});
+	
+	$(window).draghover().on({
+	  'draghoverstart': function() {
+		unfoldMenu();
+	  },
+	  'draghoverend': function() {
+		foldMenu();
+	  }
+	});
 
 
 
+}
+
+function foldMenu(){
+	$('#menu-container').animate({left:-180},50);  
+}
+function unfoldMenu(){
+	$('#menu-container').animate({left:0},50);  
 }
 
 function appendText(text){
@@ -329,3 +347,26 @@ function insertAtCaret(areaId,text) {
     }
     txtarea.scrollTop = scrollPos;
 }
+
+
+$.fn.draghover = function(options) {
+  return this.each(function() {
+
+    var collection = $(),
+        self = $(this);
+
+    self.on('dragenter', function(e) {
+      if (collection.length === 0) {
+        self.trigger('draghoverstart');
+      }
+      collection = collection.add(e.target);
+    });
+
+    self.on('dragleave drop', function(e) {
+      collection = collection.not(e.target);
+      if (collection.length === 0) {
+        self.trigger('draghoverend');
+      }
+    });
+  });
+};

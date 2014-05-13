@@ -629,7 +629,11 @@ textarea#content{
 }
 
 
-#content code{ margin: 10px 0; padding: 3px 5px 3px 5px; -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px;overflow: auto; display:inline-block;}
+#content code{ 
+margin: 10px 0; padding: 3px 5px 3px 5px; 
+-moz-border-radius: 2px; 
+-webkit-border-radius: 2px; 
+border-radius: 2px;overflow: auto; display:inline-block;}
 
 /* ==========================================================================
    Helper classes
@@ -742,14 +746,17 @@ textarea#content{
  #menu-container{
 					height:100%;
 					background-color:#1A1A1A;
-					width:20%;
+					width:200px;
 					min-width:150px;
 					max-width:200px;
 					float:left;
 					color:#cecece;
 					box-shadow: -2px 0 3px #000000 inset;
-					opacity:0;
-					position:fixed;
+					opacity:1;
+					position:absolute;
+					top:0px;
+					z-index:1000;
+					left:-180px;
 					transition:0.2s linear;
 	}
 	#content-container{
@@ -775,9 +782,12 @@ textarea#content{
 					float:none;
 					box-shadow: -2px 0 3px #000000 inset;
 					position:inherit;
+					top:0px;
+					left:0px;
 					overflow: hidden;
 					opacity: 1;
 					display:block;
+					z-index:1000;
 					visibility:visible;
 	}
 }
