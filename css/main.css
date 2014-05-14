@@ -768,6 +768,8 @@ border-radius: 2px;overflow: auto; display:inline-block;}
     	width:100%;
     	padding: 10px;
     }
+
+
     #menu-container #logo{
 		display:none;
 	}
@@ -779,12 +781,16 @@ border-radius: 2px;overflow: auto; display:inline-block;}
 #content-options li#option-login {
 		opacity:1;
 	}
+	textarea#content,#content-container{
+		min-height:0;
+	}
 	#menu-container{
 					
 					width:100%;
 					max-width: 100%;
 					margin-top: 0px;
 					min-width: 100%;
+					min-height:0;
 					height: auto;
 					float:none;
 					box-shadow: -2px 0 3px #000000 inset;
