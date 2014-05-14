@@ -12,13 +12,13 @@
 	text-decoration:none;
 }
 .markItUp  {
-	width:700px;
+	width:100%;
 	margin:5px 0 5px 0;
 }
 
 
 .markdown{
-	height:90%;
+	height:100%;
 }
 .markItUp,.markItUpContainer{
 	height:100%;
@@ -30,7 +30,7 @@
 }
 .markItUpEditor {
 	font:12px 'Courier New', Courier, monospace;
-	padding:5px;
+	padding:10px;
 	width:690px;
 	height:320px;
 	clear:both;
@@ -57,20 +57,18 @@
 }
 /***************************************************************************************/
 .markItUpHeader{
-	background: linear-gradient(to bottom, #F1F1F1 0%, #E2E2E2 100%) repeat scroll 0 0 transparent;
+	background: #E0E0E0;
 	margin:0;
-	padding:5px;
+	padding:10px;
 	line-height:11px;
-	border: 1px solid #BBBBBB;
+	width:100%;
+	border: 1px solid #DADADA;
 	display:block;
 	height: 15px;
-	border-radius:4px;
-	opacity: 0.3;
+	opacity: 1;
 	transition:0.2s linear;
 }
-.markItUpHeader:hover{
-	opacity: 1;
-}
+
 
 /* first row of buttons */
 .markItUpHeader ul li	{

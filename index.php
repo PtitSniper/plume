@@ -39,7 +39,7 @@ $pageContent = Parsedown::instance()->parse($pageContent);
 				<div id='menu-container'>
 						<div id="logo" onclick="window.location='index.php';"><span >V<?php echo APPLICATION_VERSION; ?></span></div>
 						<ul id='menu'></ul>
-						<div id='option-edit-menu' onclick="edit('<?php echo MD_MENU; ?>',this,'menu');">Editer</div>
+						<div id='option-edit-menu' onclick="edit('<?php echo MD_MENU; ?>',this,'menu');">Editer le menu</div>
 					<div id='media-container'>
 						<div id='search-zone'>
 							<img src="img/icon-search.png" align="absmiddle"> <input type="text" placeholder="keyword" id="search-input">
@@ -74,10 +74,12 @@ $pageContent = Parsedown::instance()->parse($pageContent);
 					<div id='content'>
 						<?php echo $pageContent; ?>
 					</div>
+
+					<div id="global-preloader"></div>
+
 					<ul id='content-options'>
 						<li id="option-edit" onclick="edit('<?php echo $page ?>',this);">Editer</li>
 						<li id="option-login">Login</li>
-						<li id="global-preloader"><img src="" align="absmiddle"> Loading...</li>
 						<!--<li onclick="share();">Partager</li>
 						<li onclick="delete();">Supprimer</li>-->
 					</ul>

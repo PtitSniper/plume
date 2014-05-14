@@ -1,2 +1,5 @@
 /feeds.rss
 /events.json
+.users.php
+.events.json
+.feeds.rss

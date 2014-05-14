@@ -16,8 +16,8 @@ myMarkdownSettings = {
         {name:'Gras', key:"G", openWith:'**', closeWith:'**'},
         {name:'Italique', key:"I", openWith:'_', closeWith:'_'},
         {separator:'---------------' },
-        {name:'Liste à bulles', openWith:'- ' },
-        {name:'Liste numérique', openWith:function(markItUp) {
+        {name:'Liste Ã  bulles', openWith:'- ' },
+        {name:'Liste numÃ©rique', openWith:function(markItUp) {
             return markItUp.line+'. ';
         }},
         {name:'Image', key:"P", replaceWith:'![[![Alternative text]!]]([![Url:!:http://]!] "[![Title]!]")'},
@@ -74,7 +74,7 @@ $(document).ready(function(){
         },
         done: function (e, data) {
 			$.data(data.files[0]).find('.progressBloc').fadeOut(300);
-            console.log(data.files[0].name+' fichier terminé');
+            console.log(data.files[0].name+' fichier terminÃ©');
         },
        	stop: function (e, data) {
 			pendingTask = false;
@@ -149,10 +149,10 @@ function init(){
 }
 
 function foldMenu(){
-	$('#menu-container').animate({left:-180},50);  
+	$('#menu-container').animate({left:-180},25);  
 }
 function unfoldMenu(){
-	$('#menu-container').animate({left:0},50);  
+	$('#menu-container').animate({left:0},25);  
 }
 
 function appendText(text){
@@ -163,11 +163,11 @@ function appendText(text){
 
 function login(){
 	if(!isEmail($('#input-login').val())){
-		message('Votre identifiant doit être un email');
+		message('Votre identifiant doit Ãªtre un email');
 		return;
 	}
 	if($('#input-password').val().length<6){
-		message('Votre mot de passe doit être composé d\'au moins 6 caracteres');
+		message('Votre mot de passe doit Ãªtre composÃ© d\'au moins 6 caracteres');
 		return;
 	}
 	$.ajax({
@@ -186,11 +186,11 @@ function login(){
 }
 function suscribe(){
 	if(!isEmail($('#input-login').val())){
-		message('Votre identifiant doit être un email');
+		message('Votre identifiant doit Ãªtre un email');
 		return;
 	}
 	if($('#input-password').val().length<6){
-		message('Votre mot de passe doit être composé d\'au moins 6 caracteres');
+		message('Votre mot de passe doit Ãªtre composÃ© d\'au moins 6 caracteres');
 		return;
 	}
 	$.ajax({
@@ -291,14 +291,17 @@ function edit(page,elem,target){
                 $('#'+target).replaceWith('<textarea id="'+target+'"></textarea>');
                 $('#'+target).html(result.content);
                 $(elem).attr('onclick','save(\''+page+'\',this,\''+target+'\');').html("Enregistrer");
-    			if(target!='menu') $('#'+target).markItUp(myMarkdownSettings);
-                $('#drop-container,#file-list,#search-zone').fadeIn(300);
-                $('#content').keydown(function(event){
-                if(event.keyCode == 9){
-                    insertAtCaret('content','\t');
-                    return false;
+    			
+                if(target!='menu'){
+                    $('#'+target).markItUp(myMarkdownSettings);
+                    $('#drop-container,#file-list,#search-zone').fadeIn(300);
+                    $('#content').keydown(function(event){
+                    if(event.keyCode == 9){
+                        insertAtCaret('content','\t');
+                        return false;
+                    }
+                    });
                 }
-                });
             }else{
                 message(result.message);
             }

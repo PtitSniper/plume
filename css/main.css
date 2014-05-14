@@ -13,7 +13,7 @@ html {
     font-size: 0.9em;
     line-height: 1.4;
 }
-html,body{ height:100%;}
+html,body{ min-height:100%;}
 
 /*
  * Customisation des sélections
@@ -80,7 +80,7 @@ html,body{
 				#logo{
 					background: url("../img/logo.jpg") no-repeat center center;
 					height:34px;
-					margin:10px auto 10px auto;
+					margin:10px 20px 0;
 					cursor:pointer;
 					padding-left: 110px;
 					padding-top: 6px;
@@ -165,12 +165,12 @@ html,body{
 				}
 
 				#global-preloader{
-					background-color:#000000;
-					color:#cecece;
-					text-align:center;
-					padding:5px;
-					margin:10px;
-					border-radius:3px;
+					background:url('../img/preloader.gif') 0 0 no-repeat;
+					width:32px;
+					height:32px;
+					position:absolute;
+					top:10px;
+					left:49%;
 					display:none;
 				}
 				#file-list{
@@ -225,7 +225,7 @@ html,body{
 					color:#cecece;
 					text-align:left;
 					padding:5px;
-					margin:10px;
+					margin:0px
 				}
 				textarea#menu{
 					background-color: transparent;
@@ -233,6 +233,7 @@ html,body{
 					width:90%;
 					border:none;
 					height:100px;
+					font-size:10px;
 				}
 				#menu a{
 					font-size: 14px;
@@ -294,7 +295,7 @@ html,body{
 					border:1px solid tansparent;
 					opacity: 0.2;		
 					border-top:1px solid #252525;
-					margin-top: 20px;	
+	
 					background-color: #000000;
 					cursor: pointer;
 					padding: 5px 5px 5px 25px;	
@@ -324,14 +325,16 @@ html,body{
 				}
 				
 				#content-container{
-					padding:0 10px 0 10px;
-					width: 60%;
-					height: 90%;
-					margin:auto;
+					padding:0 10px 0 210px;
+					width: 75%;
+					height: 100%;
+					padding-top:35px;
+					margin:0;
 				}
 				#content-options {
-					position:fixed;
-					bottom: 0;
+					position:absolute;
+					top: 0;
+					right:0;
 				}
 
 				#content-options li{
@@ -467,11 +470,11 @@ html,body{
 	width:100%;
 	background-color: transparent;
 	border:none;
-	margin-bottom: 50px;
 }
 textarea#content{
 	font-size: 14px;
-	height:100%;
+	min-height:100%;
+	background-color: #FBFBFB;
 }
 
 ::-moz-selection { background: #222222; color: #ffffff; text-shadow: none;border:1px; }
@@ -570,7 +573,7 @@ textarea#content{
 }
 
 #content ul li:before {
-    color: #DDDDDD;
+    color: #C6C6C6;
     content: "✔";
     line-height: 2;
     margin-right: 0.9em;
@@ -745,33 +748,36 @@ border-radius: 2px;overflow: auto; display:inline-block;}
 
 
  #menu-container{
-					height:100%;
+					min-height:100%;
 					background-color:#1A1A1A;
 					width:200px;
 					min-width:150px;
 					max-width:200px;
-					float:left;
 					color:#cecece;
 					box-shadow: -2px 0 3px #000000 inset;
-					opacity:1;
-					position:absolute;
+					position:fixed;
 					top:0px;
 					z-index:1000;
 					left:-180px;
 					transition:0.2s linear;
 	}
-	#content-container{
-    	padding-top: 20px;
-    }
 
 @media only screen and (max-width: 35em) {
     /* Style adjustments for viewports that meet the condition */
     #content-container{
     	width:100%;
-    	padding-top: 0px;
+    	padding: 10px;
     }
     #menu-container #logo{
 		display:none;
+	}
+
+	#content-options{
+		position:inherit;
+	}
+	#content-options li#option-edit,
+#content-options li#option-login {
+		opacity:1;
 	}
 	#menu-container{
 					

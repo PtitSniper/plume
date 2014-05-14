@@ -59,9 +59,14 @@ switch($action){
 		$users = getDb(USER_DB);
 		$myUser = false;
 		foreach($users as $user){
-			if($_['login']==$user['login'] && sha1($_['password'])==$user['password']) $myUser = (object)$user;
+			if($_['login']==$user['login'] && sha1($_['password'])==$user['password']){
+				$myUser = new User();
+				$myUser->login = $user['login'];
+				$myUser->setRank($user['rank']);
+			}
 		}
 		if($myUser!=false){
+
 			$_SESSION['user'] = serialize($myUser);
 			$jsonResponse['success'] = true;
 		}else{
@@ -73,7 +78,7 @@ switch($action){
 	case 'suscribe':
 		if(!filter_var($_['login'], FILTER_VALIDATE_EMAIL) ||  strlen($_['password'])<6) exit(0);
 		$users = getDb(USER_DB);
-		$users[] = (object) array('login'=>$_['login'],'password'=>sha1($_['password']));
+		$users[] = (object) array('login'=>$_['login'],'rank'=>'user','password'=>sha1($_['password']));
 		saveDb(USER_DB,$users);
 		//echo json_encode($jsonResponse);
 	break;
@@ -89,7 +94,7 @@ switch($action){
 			<div id="button-login" onclick="login();">Login</div> | 
 			<div id="button-suscribe" onclick="suscribe();">Inscription</div>
 		<?php }else{ ?>
-			Identifié avec <span class="emphasis"><?php echo $myUser->login; ?></span> - <a onclick="disconnect()">Déconnexion</a>
+			Identifié avec <span class="emphasis" title="Rang : <?php echo $myUser->rank; ?> - Droits :<?php echo "\r\n".implode(','."\r\n",$myUser->rights); ?>"><?php echo $myUser->login; ?></span> - <a onclick="disconnect()">Déconnexion</a>
 		<?php } 
 	break;
 	
@@ -99,7 +104,7 @@ switch($action){
 	break;
 
 	case 'deleteFile':
-		if($myUser!=false){
+		if($myUser!=false && $myUser->can('DELETE_FILE')){
 			unlink($_['file']);
 			$jsonResponse['success'] = true;
 		}else{
@@ -112,7 +117,8 @@ switch($action){
 		require_once('rss.php');
 		header('Content-Type: text/xml; charset=utf-8');
 		if(!file_exists(EVENT_FILE)) touch(EVENT_FILE);
-		$events = json_decode(file_get_contents(EVENT_FILE));
+		$events = file_get_contents(EVENT_FILE);
+		$events = $events == ''? array() :json_decode(file_get_contents(EVENT_FILE));
 		if(!file_exists(CACHE_RSS) || (time()-filemtime(CACHE_RSS))>REFRESH_RSS_TIME ){
 	
 			$rss = new Rss(APPLICATION_TITLE,$_SERVER['REMOTE_ADDR']);
@@ -161,7 +167,7 @@ switch($action){
 	break;
 
 	case 'upload':
-			if(!$myUser) exit();
+			if(!$myUser ||  !$myUser->can('UPLOAD_FILE') ) exit();
 				if(array_key_exists('files',$_FILES) && $_FILES['files']['error'][0] == 0 ){
 					$pic = $_FILES['files'];
 					$pic['name'] = utf8_decode($pic['name'][0]);
