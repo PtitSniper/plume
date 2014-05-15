@@ -78,7 +78,7 @@ $(document).ready(function(){
         },
        	stop: function (e, data) {
 			pendingTask = false;
-			//loadFiles();
+			loadFiles();
 			console.log('tous les uploads termines');
 			zenMode = true;
        	},

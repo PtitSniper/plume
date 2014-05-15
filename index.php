@@ -73,7 +73,7 @@ $pageContent = Parsedown::instance()->parse($pageContent);
 				<div id='content-container'>
 					
 					<div id='content'>
-						<?php echo $pageContent; ?>
+						<?php echo stripslashes($pageContent); ?>
 					</div>
 
 					<div id="global-preloader"></div>

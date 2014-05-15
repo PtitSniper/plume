@@ -12,6 +12,7 @@ switch($action){
 	if($myUser!=false){
 		$emptyMessage = ($page==MD_MENU?MD_MENU_DEFAUT_CONTENT:'Le contenu de  **'.$page.'** est vide :p');
 		$content = file_exists($pagePath)?file_get_contents($pagePath):$emptyMessage;
+		$content = stripslashes($content);
 		$jsonResponse['success'] = true;
 		$jsonResponse['content'] = $content;
 	}else{
@@ -48,7 +49,7 @@ switch($action){
 			copy($pagePath,ARCHIVES_ROOT.$page.'/'.date('d-m-Y'));
 			$content = Parsedown::instance()->parse(html_entity_decode($_['content'],ENT_QUOTES,'UTF-8'));
 			$jsonResponse['success'] = true;
-			$jsonResponse['content'] = $content;
+			$jsonResponse['content'] = stripslashes($content);
 		}else{
 			$jsonResponse['message'] = 'Vous ne pouvez pas editer tant que vous n\'êtes pas connecté.';
 		}
