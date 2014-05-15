@@ -20,8 +20,14 @@
 				if(this.settings.clone == true)
 					this.codelite = $('<pre />').text(this.code.text()).addClass('litelighter').insertAfter(this.code.css('display','none'));
 			
-				if(this.code.data('lllanguage'))
-					this.settings.language = this.code.data('lllanguage');
+			
+
+				
+				if($(this.code).attr('class')){
+					var lang = $(this.code).attr('class').split('language-')[1];
+					this.settings.language = lang;
+				}
+
 				if(this.code.data('llstyle'))
 					this.settings.style = this.code.data('llstyle');
 

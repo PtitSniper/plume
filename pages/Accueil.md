@@ -1,9 +1,9 @@
 Bienvenue
 ===
 
-
-	// js //
-	$hey = "Hello wiki! :D";
+```js
+var hey = "Hello wiki! :D";
+```
 ---
 
 Bienvenue sur ***Plume***, un wiki kiss utilisant les technologies : 

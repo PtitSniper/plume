@@ -16,25 +16,30 @@
 ![id](file//2013/10/idleblog logo.png)
 
 Code php
-	// php //
-	$test = 'coucou';
+```php
+$test = 'coucou';
+```
 
 Code javascript
-	// js //
-	var test = 'coucou';
+```js
+var test = 'coucou';
+```
 
 Code sql
-	-- sql --
-	Insert into 'table' (id,pseudo,name) values (1,'idleman','valentin');
+```sql
+Insert into 'table' (id,pseudo,name) values (1,'idleman','valentin');
+```
 
 Code css
-	/* css */
+```css
 	html{
 	width:50%;
 	}
+```
 
 [Google]: http://google.com/
 [Google][]
 
 *single asterisks*
+
 **double asterisks**
