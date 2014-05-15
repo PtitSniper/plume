@@ -40,20 +40,21 @@ $pageContent = Parsedown::instance()->parse($pageContent);
 						<div id="logo" onclick="window.location='index.php';"><span >V<?php echo APPLICATION_VERSION; ?></span></div>
 						<ul id='menu'></ul>
 						<div id='option-edit-menu' onclick="edit('<?php echo MD_MENU; ?>',this,'menu');">Editer le menu</div>
-					<div id='media-container'>
-						<div id='search-zone'>
-							<img src="img/icon-search.png" align="absmiddle"> <input type="text" placeholder="keyword" id="search-input">
-						</div>
-
-						<div id="drop-container" title="Faites glisser des fichiers sur la zone ou cliquez sur celle ci pour envoyer des fichiers">
-							<div id="drop-zone">
-								<input id="uploadButton" type="file" size="1" name="files[]" data-url="./action.php?action=upload" multiple>
+						<div class="rss-button" onclick="window.location.href='action.php?action=rss'">Flux Rss</div>
+						<div id='media-container'>
+							<div id='search-zone'>
+								<img src="img/icon-search.png" align="absmiddle"> <input type="text" placeholder="keyword" id="search-input">
 							</div>
+
+							<div id="drop-container" title="Faites glisser des fichiers sur la zone ou cliquez sur celle ci pour envoyer des fichiers">
+								<div id="drop-zone" ondragover="$(this).addClass('dragOver');" ondragleave="$(this).removeClass('dragOver');">
+									<input id="uploadButton" type="file" size="1" name="files[]" data-url="./action.php?action=upload" multiple>
+								</div>
+							</div>
+							
+							<ul id='file-list'></ul>
 						</div>
-						
-						<ul id='file-list'></ul>
-					</div>
-					<div class="rss-button" onclick="window.location.href='action.php?action=rss'">Flux Rss</div>
+					
 
 					<!--
 					<div id='share-container'>

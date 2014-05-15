@@ -66,25 +66,26 @@ $(document).ready(function(){
 			pendingTask = true;
         	data.submit();
 			console.log('ajout de fichiers',data.files[0].name);
-            var tpl = $('<li><img src="img/icon-file.png" align="absmiddle"> '+data.files[0].name+'<div class="progressBloc"><progress value="0" max="100"></progress></div></li>');
+            var tpl = $('<li><img src="img/icon-file.png" align="absmiddle"> '+data.files[0].name+'<div class="progressBloc"><progress value="0" max="100"></progress><span></span></div></li>');
             $.data(data.files[0],tpl);
 			$('#file-list').prepend(tpl);
             console.log('add');
 			zenMode = false;
         },
         done: function (e, data) {
-			$.data(data.files[0]).find('.progressBloc').fadeOut(300);
+			//$.data(data.files[0]).find('.progressBloc').fadeOut(300);
             console.log(data.files[0].name+' fichier terminé');
         },
        	stop: function (e, data) {
 			pendingTask = false;
-			loadFiles();
+			//loadFiles();
 			console.log('tous les uploads termines');
 			zenMode = true;
        	},
         progress: function (e, data) {
 	       var progress = parseInt(data.loaded / data.total * 100, 10);
             $.data(data.files[0]).find('progress').val(progress);
+            $.data(data.files[0]).find('span').html(progress+'%');
 			console.log('progression upload '+progress+'%');
     	}
     });
