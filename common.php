@@ -23,6 +23,17 @@ define('EVENT_FILE','events.json');
 define('APPLICATION_VERSION','1.0.0');
 define('UPDATE_URL','http://update.idleman.fr/plume?callback=?');
 
+$botsphinx = array(
+	array('Combien de bras possède l\'homme ? (répondez en chiffre)','2'),
+	array('Combien de pattes possède un chat ? (répondez en chiffre)','4'),
+	array('Combien de soleils voyons nous depuis la terre ? (répondez en chiffre)','1'),
+	array('Avez vous des yeux ? (répondez en minuscule)','oui'),
+	array('Avez vous des ailes ? (répondez en minuscule)','non'),
+	array('Etes vous un terminator ? (répondez avec un mot en minuscule)','non'),
+	array('Etes vous un terminator ? (répondez avec un mot en minuscule)','oui'),
+);
+
+
 //Démarrage session
 session_start();
 require_once('function.php');

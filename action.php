@@ -13,8 +13,12 @@ switch($action){
 		$emptyMessage = ($page==MD_MENU?MD_MENU_DEFAUT_CONTENT:'Le contenu de  **'.$page.'** est vide :p');
 		$content = file_exists($pagePath)?file_get_contents($pagePath):$emptyMessage;
 		$content = stripslashes($content);
+		
+		$jsonResponse['events'] = getEvents(array('page'=>$page));
 		$jsonResponse['success'] = true;
 		$jsonResponse['content'] = $content;
+		//$jsonResponse['content'] = FineDiff::renderToTextFromOpcodes($content, "c58i13:ou pas ! :D\n\nc637");
+		
 	}else{
 		$jsonResponse['message'] = 'Vous ne pouvez pas editer tant que vous n\'êtes pas connecté.';
 	}
@@ -23,30 +27,35 @@ switch($action){
 
 	case 'save':
 		if($myUser!=false){
-
-			event('Modification '.$pagePath,$myUser->login.' a modifié le fichier '.$page.' le '. date('d/m/Y H:i:s'),$page);
-			if(!is_dir(ARCHIVES_ROOT) ) mkdir(ARCHIVES_ROOT);
-			$folders = explode('/',$pagePath);
-			$p = array_pop($folders);
-			$path = MD_ROOT;
-			$archives = ARCHIVES_ROOT;
-			foreach ($folders as $key => $dir) {
-					if($key == 1) {
-						$path = $dir;
-					} elseif($key != 0) {
-						$path .= '/'.$dir;
-						$archives .= '/'.$dir;
+			$newContent = html_entity_decode($_['content'],ENT_QUOTES,'UTF-8');
+			$oldContent = file_exists($pagePath)?file_get_contents($pagePath):'';
+			
+			if($newContent!=$oldContent){
+				$mod = FineDiff::getDiffOpcodes($newContent, $oldContent);
+				event('UPDATE_FILE',array('page'=>$page,'mod'=>$mod),$myUser->login);
+				if(!is_dir(ARCHIVES_ROOT) ) mkdir(ARCHIVES_ROOT);
+				$folders = explode('/',$pagePath);
+				$p = array_pop($folders);
+				$path = MD_ROOT;
+				$archives = ARCHIVES_ROOT;
+				foreach ($folders as $key => $dir) {
+						if($key == 1) {
+							$path = $dir;
+						} elseif($key != 0) {
+							$path .= '/'.$dir;
+							$archives .= '/'.$dir;
+						}
+					if (!is_dir($path)) {
+						mkdir($path);
 					}
-				if (!is_dir($path)) {
-					mkdir($path);
+					if (!is_dir($archives)) {
+						mkdir($archives);
+					}
 				}
-				if (!is_dir($archives)) {
-					mkdir($archives);
-				}
+				file_put_contents($pagePath, $newContent);
+				if(!file_exists(ARCHIVES_ROOT.$page)) mkdir(ARCHIVES_ROOT.$page);
+				copy($pagePath,ARCHIVES_ROOT.$page.'/'.date('d-m-Y'));
 			}
-			file_put_contents($pagePath, html_entity_decode($_['content'],ENT_QUOTES,'UTF-8'));
-			if(!file_exists(ARCHIVES_ROOT.$page)) mkdir(ARCHIVES_ROOT.$page);
-			copy($pagePath,ARCHIVES_ROOT.$page.'/'.date('d-m-Y'));
 			$content = Parsedown::instance()->parse(html_entity_decode($_['content'],ENT_QUOTES,'UTF-8'));
 			$jsonResponse['success'] = true;
 			$jsonResponse['content'] = stripslashes($content);
@@ -67,7 +76,6 @@ switch($action){
 			}
 		}
 		if($myUser!=false){
-
 			$_SESSION['user'] = serialize($myUser);
 			$jsonResponse['success'] = true;
 		}else{
@@ -77,11 +85,55 @@ switch($action){
 	break;
 	
 	case 'suscribe':
-		if(!filter_var($_['login'], FILTER_VALIDATE_EMAIL) ||  strlen($_['password'])<6) exit(0);
+		header('content-type:text/json');
+		$response = array('error'=>array());
+		if(!filter_var($_['login'], FILTER_VALIDATE_EMAIL) ||  strlen($_['password'])<6) $response['error'][] = 'Identifiant ou mot de passe non conformes';
+		$q = $botsphinx[$_['robot-num']];
+		if($q[1] != $_['robot']) $response['error'][] = 'Mauvaise réponse à la question anti-robot.';
+		
+		if(count($response['error']) == 0){
+			try{
+			$confirm = sha1(rand(0,1000).time());
+			$url = (isset($_SERVER['HTTPS']) ? 'https://' : 'http://').$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
+			$link = dirname($url).'/action.php?action=confirmSubscription&c='.$confirm;
+			@mail($_['login'],'[WIKI] Confirmation d\'inscription','Veuillez confirmer votre inscription au wiki en cliquant sur le lien suivant <a href="'.$link.'">'.$link.'</a>');
+			$users = getDb(USER_DB);
+			$users[] = (object) array('confirm'=>$confirm,'login'=>$_['login'],'rank'=>'user','password'=>sha1($_['password']));
+			saveDb(USER_DB,$users);
+			}catch(Exception $e){
+				$response['error'][] = $e;
+			}
+		}
+		echo json_encode($response);
+	break;
+	
+	case 'confirmSubscription':
 		$users = getDb(USER_DB);
-		$users[] = (object) array('login'=>$_['login'],'rank'=>'user','password'=>sha1($_['password']));
-		saveDb(USER_DB,$users);
-		//echo json_encode($jsonResponse);
+		$current = false;
+		foreach($users as $key=>$user){
+			if(isset($user['confirm']) && $_['c']==$user['confirm']){
+				unset($users[$key]['confirm']);
+				$current = $user; 
+			}
+		}
+		if($current==false){
+			echo 'Ce code de validation ne correspond à aucun compte';
+		}else{
+			saveDb(USER_DB,$users);
+			header('location:index.php?message=Inscription confirmée, vous pouvez vous identifier.');
+		}
+	break;
+	
+	case 'suscribeForm':
+		$k = rand(0,count($botsphinx)-1);
+		$q = $botsphinx[$k];
+		echo '<form>
+			<label for="login">E-mail</label> : <br/><input type="text" style="width:150px;padding:3px;" id="login"><br/>
+			<label for="password">Mot de passe</label>  : <br/><input type="password" style="width:150px;padding:3px;" id="password"><br/>
+			<label for="password-confirm">Confirmation mot de passe :</label> <br/><input type="password" style="width:150px;padding:3px;" id="password-confirm"><br/>
+			<label for="robot">'.$q[0].' :</label> <br/><input type="text" style="width:150px;padding:3px;" id="robot"><input id="robot-num" value="'.$k.'" type="hidden"><br/>
+			<div id="button-suscribe" onclick="sendSuscribe();">Inscription</div>
+		</form>';
 	break;
 	
 	case 'logout':
@@ -117,14 +169,19 @@ switch($action){
 	case 'rss':
 		require_once('rss.php');
 		header('Content-Type: text/xml; charset=utf-8');
-		if(!file_exists(EVENT_FILE)) touch(EVENT_FILE);
-		$events = file_get_contents(EVENT_FILE);
-		$events = $events == ''? array() :json_decode(file_get_contents(EVENT_FILE));
+
+		$events = getEvents();
+		
 		if(!file_exists(CACHE_RSS) || (time()-filemtime(CACHE_RSS))>REFRESH_RSS_TIME ){
 	
 			$rss = new Rss(APPLICATION_TITLE,$_SERVER['REMOTE_ADDR']);
 			foreach($events as $event){
-				$rss->add($event->title,$event->date,$event->link,$event->content);
+				switch($event->type){
+					case 'UPDATE_FILE':
+						$title = $event->user.' a modifié la page '.$event->page.' le '.$event->date;
+					break;
+				}
+				$rss->add($title,$event->date,$event->link,$title);
 			}
 			file_put_contents(CACHE_RSS,$rss->publish());
 		}	

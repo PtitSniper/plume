@@ -1,17 +1,48 @@
 <?php
 
-function event($title,$content,$page){
-
+function event($type,$params,$user,$date=false){
+	if(!$date) $date = time();
 	if(!file_exists(EVENT_FILE)) touch(EVENT_FILE);
 	$events = json_decode(file_get_contents(EVENT_FILE));
 	$events = $events ==null?array():$events;
+	
 	$event = (object) array();
-	$event->title = $title;
-	$event->date = date('d/m/Y H:i:s');
-	$event->link = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : "").$page;
-	$event->content =$content;
+	$event->type = $type;
+	
+	switch($event->type){
+		case 'UPDATE_FILE':
+			$event->user = $user;
+			$event->date = date('d/m/Y H:i:s',$date);
+			$event->page = $params['page'];
+			$event->mod = $params['mod'];
+			$event->link = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : "").$params['page'];
+		break;
+		default:
+		break;
+	}
 	array_unshift($events,$event);
+	
 	file_put_contents(EVENT_FILE, json_encode($events));
+}
+
+function getEvents($filter=false){
+	if(!file_exists(EVENT_FILE)) touch(EVENT_FILE);
+	$events = file_get_contents(EVENT_FILE);
+	$events = $events == ''? array() :json_decode(file_get_contents(EVENT_FILE));
+	
+	$return = array();
+	
+	if($filter!=false){
+		$key = array_keys($filter);
+		$key = $key[0];
+		foreach($events as $event){
+			if($event->$key == $filter[$key]) $return[] = $event;
+		}
+	}else{
+		$return = $events;
+	}
+	
+	return $return;
 }
 
 function getDb($dbFile){

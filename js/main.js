@@ -52,8 +52,7 @@ $(document).ready(function(){
 
 	init();
 
-    $.getJSON($("#UPDATE_URL").html(),function(data){
-    });
+    $.getJSON($("#UPDATE_URL").html(),function(data){});
 
 
 	$('#uploadButton').fileupload({
@@ -186,24 +185,33 @@ function login(){
         }});
 }
 function suscribe(){
-	if(!isEmail($('#input-login').val())){
+	$('#content').load('./action.php?action=suscribeForm');
+}
+
+function sendSuscribe(){
+	if(!isEmail($('#content #login').val())){
 		message('Votre identifiant doit être un email');
 		return;
 	}
-	if($('#input-password').val().length<6){
+	if($('#content #password').val().length<6){
 		message('Votre mot de passe doit être composé d\'au moins 6 caracteres');
+		return;
+	}
+	if($('#content #password').val()!=$('#content #password-confirm').val()){
+		message('Votre mot de passe ne correspond pas à sa confirmation');
 		return;
 	}
 	$.ajax({
         type: "POST",
         url: 'action.php',
         dataType:"json",
-        data:{action:'suscribe',login:$('#input-login').val(),password:$('#input-password').val()},
+        data:{action:'suscribe',login:$('#content #login').val(),password:$('#content #password').val(),'robot-num':$('#content #robot-num').val(),robot:$('#content #robot').val()},
         success: function(result){
-            if(result.success){
-				login();
+            if(result.error.length==0){
+				message('Inscription réussie, vous recevrez un email de confirmation sous peu.');
+				window.location='index.php';
             }else{
-                message(result.message);
+                message(result.error.join("\n"));
             }
         }});
 }

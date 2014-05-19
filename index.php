@@ -1,8 +1,9 @@
 <?php
 require_once('common.php');
 if(!file_exists(USER_DB)) header('location: install.php');
+
 //Lecture de la page courante et conversion markdown/html
-$pageContent = file_exists($pagePath )?file_get_contents($pagePath):'Le contenu de  **'.$page.'** est vide :p';
+$pageContent = file_exists($pagePath) ? file_get_contents($pagePath) : 'Le contenu de  **'.$page.'** est vide :p';
 //Mode lecture/mode edition
 $pageContent = Parsedown::instance()->parse($pageContent);
 
