@@ -14,7 +14,6 @@ function event($type,$params,$user,$date=false){
 			$event->user = $user;
 			$event->date = date('d/m/Y H:i:s',$date);
 			$event->page = $params['page'];
-			$event->mod = $params['mod'];
 			$event->link = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : "").$params['page'];
 		break;
 		default:
@@ -56,5 +55,7 @@ function saveDb($dbFile,$dbdata){
 	file_put_contents($dbFile,gzdeflate('<?php /* '.json_encode($dbdata).' */ ?>'));
 }
 
-
+function sortVersions($a,$b){
+	return $a['version'] < $b['version']?1:-1;
+}
 ?>

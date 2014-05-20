@@ -14,10 +14,28 @@ switch($action){
 		$content = file_exists($pagePath)?file_get_contents($pagePath):$emptyMessage;
 		$content = stripslashes($content);
 		
-		$jsonResponse['events'] = getEvents(array('page'=>$page));
+		$archives = glob(ARCHIVES_ROOT.$page.'/*');
+		if(is_array($archives) && count($archives)>0){
+			foreach($archives as $archive){
+				list($d,$m,$y,$h,$i,$v,$a) = explode('-',basename($archive));
+				$jsonResponse['versions'][] = 
+				array('date' => $d.'/'.$m.'/'.$y.' '.$h.'h'.$i,'author' => $a,'version' => $v,'link' => $archive);
+			}
+			usort($jsonResponse['versions'],'sortVersions');
+		}
+		if(isset($_['version'])){
+			foreach($jsonResponse['versions'] as $version){
+				if($version['version']==$_['version']){
+					break;
+				}else{
+					$content = FineDiff::renderToTextFromOpcodes($content, file_get_contents($version['link']));
+				}
+			}
+		}
+		
 		$jsonResponse['success'] = true;
 		$jsonResponse['content'] = $content;
-		//$jsonResponse['content'] = FineDiff::renderToTextFromOpcodes($content, "c58i13:ou pas ! :D\n\nc637");
+		
 		
 	}else{
 		$jsonResponse['message'] = 'Vous ne pouvez pas editer tant que vous n\'êtes pas connecté.';
@@ -32,7 +50,7 @@ switch($action){
 			
 			if($newContent!=$oldContent){
 				$mod = FineDiff::getDiffOpcodes($newContent, $oldContent);
-				event('UPDATE_FILE',array('page'=>$page,'mod'=>$mod),$myUser->login);
+				event('UPDATE_FILE',array('page'=>$page),$myUser->login);
 				if(!is_dir(ARCHIVES_ROOT) ) mkdir(ARCHIVES_ROOT);
 				$folders = explode('/',$pagePath);
 				$p = array_pop($folders);
@@ -54,7 +72,8 @@ switch($action){
 				}
 				file_put_contents($pagePath, $newContent);
 				if(!file_exists(ARCHIVES_ROOT.$page)) mkdir(ARCHIVES_ROOT.$page);
-				copy($pagePath,ARCHIVES_ROOT.$page.'/'.date('d-m-Y'));
+				$count = glob(ARCHIVES_ROOT.$page.'/*');
+				file_put_contents(ARCHIVES_ROOT.$page.'/'.date('d-m-Y-H-i').'-'.count($count).'-'.$myUser->login,$mod);
 			}
 			$content = Parsedown::instance()->parse(html_entity_decode($_['content'],ENT_QUOTES,'UTF-8'));
 			$jsonResponse['success'] = true;
@@ -127,12 +146,15 @@ switch($action){
 	case 'suscribeForm':
 		$k = rand(0,count($botsphinx)-1);
 		$q = $botsphinx[$k];
-		echo '<form>
+		echo '
+			<h1>Inscription</h1>
+			<p>Merci de bien vouloir répondre aux questions ci dessous.</p>
+			<form id="suscribe-form">
 			<label for="login">E-mail</label> : <br/><input type="text" style="width:150px;padding:3px;" id="login"><br/>
 			<label for="password">Mot de passe</label>  : <br/><input type="password" style="width:150px;padding:3px;" id="password"><br/>
 			<label for="password-confirm">Confirmation mot de passe :</label> <br/><input type="password" style="width:150px;padding:3px;" id="password-confirm"><br/>
 			<label for="robot">'.$q[0].' :</label> <br/><input type="text" style="width:150px;padding:3px;" id="robot"><input id="robot-num" value="'.$k.'" type="hidden"><br/>
-			<div id="button-suscribe" onclick="sendSuscribe();">Inscription</div>
+			<button id="button-suscribe" onclick="sendSuscribe();">Inscription</button>
 		</form>';
 	break;
 	
@@ -167,9 +189,7 @@ switch($action){
 	break;
 
 	case 'rss':
-		require_once('rss.php');
 		header('Content-Type: text/xml; charset=utf-8');
-
 		$events = getEvents();
 		
 		if(!file_exists(CACHE_RSS) || (time()-filemtime(CACHE_RSS))>REFRESH_RSS_TIME ){

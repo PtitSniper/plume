@@ -71,6 +71,37 @@ html,body{
 					color:#222222;
 					cursor:pointer;
 				}
+				#suscribe-form #button-suscribe{
+					border: 1px solid #CECECE;
+					border-radius: 3px;
+					color: #4F4F4F;
+					cursor: pointer;
+					display: inline-block;
+					font-size: 12px;
+					margin-top: 10px;
+					padding: 5px;
+				}
+				
+				.markItUpHeader ul li.archiveButton{
+					float:right;
+					background-image : url("../img/list-bullet.png");
+					width:16px;
+					height:16px;
+					cursor:pointer;
+				}
+			
+				.versionPane{
+					display:none;
+					width:180px;
+					padding:10px;
+					float:right;
+				}
+				.versionPane ul li{
+					font-size:10px;
+					padding:5px;
+					border-bottom:1 px dotted #cecece;
+					cursor:pointer;
+				}
 				
 				ul{
 					margin:0;

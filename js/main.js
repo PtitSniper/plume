@@ -289,21 +289,30 @@ function deleteFile(file,target){
 }
 
 
-function edit(page,elem,target){
+function edit(page,elem,target,version){
         target = target==null?'content':target;
         $.ajax({
         type: "POST",
         dataType: "json",
-        url: 'action.php?action=edit&page='+page,
+        url: 'action.php?action=edit&page='+page+(version!=null?'&version='+version:''),
         success: function(result){
             if(result.success){
                 $('#'+target).replaceWith('<textarea id="'+target+'"></textarea>');
                 $('#'+target).html(result.content);
-                $(elem).attr('onclick','save(\''+page+'\',this,\''+target+'\');').html("Enregistrer");
+                if(elem!=null) $(elem).attr('onclick','save(\''+page+'\',this,\''+target+'\');').html("Enregistrer");
     			
                 if(target!='menu'){
                     $('#'+target).markItUp(myMarkdownSettings);
+					$('.markItUpHeader ul').append('<li onclick="toggleVersions();" title="Volet des versions" class="archiveButton"></li>');
                     $('#drop-container,#file-list,#search-zone').fadeIn(300);
+					
+					var versions = '<ul>';
+					for(var key in result.versions){
+						versions += '<li onclick="selectVersion(\''+page+'\',\''+target+'\',\''+result.versions[key].version+'\')" title="V'+result.versions[key].version+' par '+result.versions[key].author+'">'+result.versions[key].date+'</li>';
+					}
+					versions += '</ul>';
+					$('.versionPane').html(versions);
+					
                     $('#content').keydown(function(event){
                     if(event.keyCode == 9){
                         insertAtCaret('content','\t');
@@ -317,6 +326,24 @@ function edit(page,elem,target){
         }});
 }
 
+
+function selectVersion(page,target,version){
+	$('#'+target).markItUp('remove');
+	$('.versionPane').hide();
+    $('#'+target).replaceWith('<div id="'+target+'"></div>');
+	edit(page,null,target,version);
+
+}
+
+function toggleVersions(){
+	if($('.versionPane').is(':visible')){
+		$('.markdown').css('float','none').animate({width: $('.markdown').width()+250+"px"}, 200);
+		$('.versionPane').fadeOut(300);
+	}else{
+		$('.markdown').animate({width: $('.markdown').width()-250+"px"}, 200).css('float','left');
+		$('.versionPane').fadeIn(300);
+	}
+}
 
 function message(msg){
     //TODO - remplacer par une dialog box plus sympa

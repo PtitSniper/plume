@@ -72,11 +72,11 @@ $pageContent = Parsedown::instance()->parse($pageContent);
 				
 				</div>
 				<div id='content-container'>
-					
+
 					<div id='content'>
 						<?php echo stripslashes($pageContent); ?>
 					</div>
-
+					<div class="versionPane"></div>
 					<div id="global-preloader"></div>
 
 					<ul id='content-options'>
