@@ -308,7 +308,7 @@ function edit(page,elem,target,version){
 					
 					var versions = '<ul>';
 					for(var key in result.versions){
-						versions += '<li onclick="selectVersion(\''+page+'\',\''+target+'\',\''+result.versions[key].version+'\')" title="V'+result.versions[key].version+' par '+result.versions[key].author+'">'+result.versions[key].date+'</li>';
+						versions += '<li  title="V'+result.versions[key].version+' par '+result.versions[key].author+'">'+result.versions[key].date+' <button onclick="selectVersion(\''+page+'\',\''+target+'\',\''+result.versions[key].version+'\')">editer</button> <button onclick="loadDiff(\'action.php?action=viewdiff&page='+page+'&version='+result.versions[key].link+'\')">diff</button></li>';
 					}
 					versions += '</ul>';
 					$('.versionPane').html(versions);
@@ -333,6 +333,12 @@ function selectVersion(page,target,version){
     $('#'+target).replaceWith('<div id="'+target+'"></div>');
 	edit(page,null,target,version);
 
+}
+
+function loadDiff(url){
+	$('#content').markItUp('remove');
+	$('#content').replaceWith('<div id="content"></div>');
+	$('#content').load(url);
 }
 
 function toggleVersions(){

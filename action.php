@@ -7,6 +7,15 @@ $jsonResponse['success'] = false;
 //Actions
 switch($action){
 	
+	case 'viewdiff':
+		echo '<style>del{background-color:#FFC0CB;}ins{background-color:#78E477;}</style><pre>';
+		$content = stripslashes(file_get_contents(MD_ROOT.$_['page'].MD_EXTENSION));
+		$diff_opcodes = file_get_contents($_['version']);
+		$from_text = FineDiff::renderToTextFromOpcodes($content, $diff_opcodes);
+		$diff_opcodes = FineDiff::getDiffOpcodes($from_text, $content);
+		echo FineDiff::renderDiffToHTMLFromOpcodes($from_text, $diff_opcodes).'</pre>';
+	break;
+	
 	case 'edit':
 
 	if($myUser!=false){
