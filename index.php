@@ -22,10 +22,7 @@ $pageContent = Parsedown::instance()->parse($pageContent);
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
-        <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
-        <link rel="stylesheet" href="css/normalize.css">
         <link rel="stylesheet" href="css/main.css">
-		<link rel="stylesheet" href="css/skin.css">
 		<link rel="icon" type="image/png" href="favicon.png" />
         <script src="js/vendor/modernizr-2.6.2.min.js"></script>
     </head>

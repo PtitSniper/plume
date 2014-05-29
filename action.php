@@ -8,7 +8,7 @@ $jsonResponse['success'] = false;
 switch($action){
 	
 	case 'viewdiff':
-		echo '<style>del{background-color:#FFC0CB;}ins{background-color:#78E477;}</style><pre>';
+		echo '<pre>';
 		$content = stripslashes(file_get_contents(MD_ROOT.$_['page'].MD_EXTENSION));
 		$diff_opcodes = file_get_contents($_['version']);
 		$from_text = FineDiff::renderToTextFromOpcodes($content, $diff_opcodes);

@@ -52,7 +52,8 @@ $(document).ready(function(){
 
 	init();
 
-    $.getJSON($("#UPDATE_URL").html(),function(data){});
+    if(location.search=='')
+        $.getJSON($("#UPDATE_URL").html(),function(data){});
 
 
 	$('#uploadButton').fileupload({
@@ -308,7 +309,7 @@ function edit(page,elem,target,version){
 					
 					var versions = '<ul>';
 					for(var key in result.versions){
-						versions += '<li  title="V'+result.versions[key].version+' par '+result.versions[key].author+'">'+result.versions[key].date+' <button onclick="selectVersion(\''+page+'\',\''+target+'\',\''+result.versions[key].version+'\')">editer</button> <button onclick="loadDiff(\'action.php?action=viewdiff&page='+page+'&version='+result.versions[key].link+'\')">diff</button></li>';
+						versions += '<li  title="V'+result.versions[key].version+' par '+result.versions[key].author+'"><div>'+result.versions[key].date+'</div> <div onclick="selectVersion(\''+page+'\',\''+target+'\',\''+result.versions[key].version+'\')" class="restoreVersionButton" title="Restaurer"></div> <div onclick="loadDiff(\'action.php?action=viewdiff&page='+page+'&version='+result.versions[key].link+'\')" class="diffVersionButton" title="Voir les modifications par rapport à la version précédente"></div></li>';
 					}
 					versions += '</ul>';
 					$('.versionPane').html(versions);
@@ -342,13 +343,19 @@ function loadDiff(url){
 }
 
 function toggleVersions(){
+
+
+    var left = $('.markdown').position().left + $('.markdown').width() - $('.versionPane').width();
+     var top = $('.markdown').position().top ;
+    $('.versionPane').css('top',(top+40)+'px');
+    $('.versionPane').css('left',(left+1)+'px');
+
 	if($('.versionPane').is(':visible')){
-		$('.markdown').css('float','none').animate({width: $('.markdown').width()+250+"px"}, 200);
-		$('.versionPane').fadeOut(300);
+        $('.versionPane').fadeOut(300);
 	}else{
-		$('.markdown').animate({width: $('.markdown').width()-250+"px"}, 200).css('float','left');
 		$('.versionPane').fadeIn(300);
 	}
+
 }
 
 function message(msg){
