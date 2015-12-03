@@ -6,7 +6,7 @@ Wiki expérimental...
 Installation
 ------------
 
-Vous pouvez installer le logiciel sur votre serveur via git (recommencé) ou, si vous n'avez qu'un simple hébergement, en téléchargeant l'archive.
+Vous pouvez installer le logiciel sur votre serveur via git (recommandé) ou, si vous n'avez qu'un simple hébergement, en téléchargeant l'archive.
 
 #### Installation via git
 
